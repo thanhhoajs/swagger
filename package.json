@@ -1,0 +1,53 @@
+{
+  "name": "@thanhhoajs/swagger",
+  "version": "0.0.1",
+  "description": "A plugin to generate swagger documentation the ThanhhoaJS framework",
+  "author": "Nguyen Nhu Khanh <kwalker.nnk@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "homepage": "https://github.com/thanhhoajs/swagger#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thanhhoajs/swagger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thanhhoajs/swagger/issues"
+  },
+  "keywords": [
+    "thanhhoa",
+    "thanhhoajs",
+    "bun",
+    "swagger",
+    "typescript"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "bun test",
+    "build": "tsc",
+    "release": "bun run format && bun run test && bun run build && bun publish"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.4.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@thanhhoajs/thanhhoa": "^0.0.4-beta.9"
+  }
+}
