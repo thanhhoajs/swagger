@@ -4,6 +4,8 @@
 
 # @thanhhoajs/swagger
 
+A plugin for generating Swagger documentation in the ThanhHoaJS framework.
+
 ## Key Features
 
 - **Decorators for API Documentation**

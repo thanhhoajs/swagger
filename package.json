@@ -1,7 +1,7 @@
 {
   "name": "@thanhhoajs/swagger",
   "version": "0.0.1",
-  "description": "A plugin to generate swagger documentation the ThanhhoaJS framework",
+  "description": "A plugin for generating Swagger documentation in the ThanhHoaJS framework",
   "author": "Nguyen Nhu Khanh <kwalker.nnk@gmail.com>",
   "license": "MIT",
   "private": false,
