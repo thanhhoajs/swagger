@@ -5,18 +5,30 @@ import { SwaggerModule } from "../module/swagger.module";
 import { SwaggerService } from "../module/swagger.service";
 
 /**
- * Sets up Swagger integration for a ThanhHoa application.
+ * Initializes and configures Swagger/OpenAPI documentation for a ThanhHoa application.
  *
- * @param app - The ThanhHoa application instance.
- * @param config - The configuration for Swagger, including document and path.
- * @param modules - An optional array of module metadata to generate documentation.
+ * @param app - ThanhHoa application instance
+ * @param config - Swagger configuration
+ * @param config.path - URL path where Swagger UI will be served (default: "docs")
+ * @param config.document - Base OpenAPI document (title, version, etc.)
+ * @param modules - Array of application modules to scan for API documentation
  *
- * This function registers the Swagger module, configures it with the provided
- * settings, generates API documentation based on the supplied modules, and
- * sets up routes to serve the Swagger UI and the JSON representation of the API
- * documentation.
+ * @example
+ * ```typescript
+ * const app = new ThanhHoa();
+ *
+ * setupSwagger(app, {
+ *   path: '/api/docs',
+ *   document: {
+ *     openapi: '3.0.0',
+ *     info: {
+ *       title: 'My API',
+ *       version: '1.0.0'
+ *     }
+ *   }
+ * }, [UsersModule, AuthModule]);
+ * ```
  */
-
 export const setupSwagger = (
   app: ThanhHoa,
   config: SwaggerConfig,

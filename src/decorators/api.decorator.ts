@@ -7,11 +7,9 @@ import {
 } from "@thanhhoajs/swagger";
 
 /**
- * Decorator to set operation metadata for a controller method.
+ * Decorator that adds OpenAPI operation metadata to a controller method.
  *
- * @param metadata - Operation metadata to set.
- *
- * @returns A decorator function that sets the operation metadata on the controller method.
+ * @param metadata - Operation metadata compliant with OpenAPI specification
  */
 export function ApiOperation(metadata: Partial<OperationObject>) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -30,13 +28,11 @@ export function ApiOperation(metadata: Partial<OperationObject>) {
 }
 
 /**
- * Decorator to set tags metadata for a controller or method.
+ * Decorator that adds OpenAPI tags to group operations together.
+ * Can be applied to controllers (for all methods) or individual methods.
  *
- * @param tags - A list of tags to be associated with the controller or method.
- *
- * @returns A decorator function that sets the tags metadata on the target.
+ * @param tags - Array of tag names to apply
  */
-
 export function ApiTags(...tags: string[]) {
   return (
     target: any,
@@ -71,14 +67,14 @@ export function ApiTags(...tags: string[]) {
 }
 
 /**
- * Decorator to add a parameter to the operation metadata for a controller method.
+ * Decorator that adds path parameter metadata to an operation.
  *
- * @param param - Partial parameter object containing details about the parameter.
- *                The parameter will be added to the "path" location in the operation metadata.
- *
- * @returns A decorator function that adds the parameter metadata to the target method.
+ * @param param - Parameter configuration object
+ * @param param.name - Name of the parameter
+ * @param param.description - Description of the parameter
+ * @param param.required - Whether parameter is required (default: true for path params)
+ * @param param.schema - OpenAPI schema defining the parameter type
  */
-
 export function ApiParam(param: Partial<ParameterObject>) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const existingMetadata =

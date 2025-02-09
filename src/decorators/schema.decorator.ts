@@ -5,13 +5,27 @@ import {
 } from "@thanhhoajs/swagger";
 
 /**
- * Decorator to add property metadata to a class.
+ * Decorates a class property with OpenAPI schema metadata.
  *
- * @param metadata - Partial schema object containing additional metadata
- *                   about the property. The "type" property is automatically
- *                   set based on the TypeScript type of the property.
+ * @param metadata - Schema configuration for the property
+ * @param metadata.description - Property description
+ * @param metadata.example - Example value
+ * @param metadata.required - Whether the property is required
+ * @param metadata.deprecated - Whether the property is deprecated
+ * @param metadata.nullable - Whether the property can be null
+ * @returns PropertyDecorator
  *
- * @returns A decorator function that adds the property metadata to the class.
+ * @example
+ * ```typescript
+ * class User {
+ *   @ApiProperty({
+ *     description: 'Email address',
+ *     example: 'user@example.com',
+ *     required: true
+ *   })
+ *   email: string;
+ * }
+ * ```
  */
 export function ApiProperty(metadata: Partial<SchemaObject> = {}) {
   return (target: any, propertyKey: string) => {
@@ -92,17 +106,28 @@ function getSchemaForType(type: any): Partial<SchemaObject> | ReferenceObject {
 }
 
 /**
- * Decorator to add model metadata to a class.
+ * Decorates a class as an OpenAPI schema model.
  *
- * @param metadata - Partial schema object containing additional metadata
- *                   about the model. The "type" property is automatically
- *                   set to "object" and merged with existing properties.
+ * @param metadata - Schema configuration for the model
+ * @param metadata.title - Model name in the documentation
+ * @param metadata.description - Model description
+ * @param metadata.example - Example object
+ * @param metadata.deprecated - Whether the model is deprecated
+ * @returns ClassDecorator
  *
- * This decorator updates the class and its prototype with the provided
- * metadata and registers the class in a global schema registry for schema
- * generation.
+ * @example
+ * ```typescript
+ * @ApiModel({
+ *   title: 'User',
+ *   description: 'Represents a user in the system',
+ *   example: {
+ *     id: 1,
+ *     email: 'user@example.com'
+ *   }
+ * })
+ * export class User {}
+ * ```
  */
-
 export function ApiModel(metadata: Partial<SchemaObject> = {}) {
   return (target: any) => {
     // Get existing metadata

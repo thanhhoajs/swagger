@@ -1,17 +1,26 @@
 import { SWAGGER_METADATA } from "@thanhhoajs/swagger";
 
 /**
- * Decorator to add a header parameter to the operation metadata for a controller method.
+ * Defines a header parameter in the OpenAPI documentation.
  *
- * @param options - An object containing details about the header parameter.
- *                  - `name`: The name of the header parameter.
- *                  - `description`: (Optional) A brief description of the parameter.
- *                  - `required`: (Optional) A boolean indicating if the parameter is required.
- *                  - `schema`: (Optional) The schema defining the type and format of the parameter.
+ * @param options - Header parameter configuration
+ * @param options.name - The header name
+ * @param options.description - Header description
+ * @param options.required - Whether the header is required
+ * @param options.schema - Schema defining the header value type
+ * @returns MethodDecorator & ClassDecorator
  *
- * @returns A decorator function that adds the header parameter metadata to the target method or class.
+ * @example
+ * ```typescript
+ * @ApiHeader({
+ *   name: 'X-API-Version',
+ *   description: 'API version requested',
+ *   required: true,
+ *   schema: { type: 'string' }
+ * })
+ * export class Controller {}
+ * ```
  */
-
 export function ApiHeader(options: {
   name: string;
   description?: string;
@@ -36,15 +45,25 @@ export function ApiHeader(options: {
 }
 
 /**
- * Decorator to add a cookie parameter to the operation metadata for a controller method.
+ * Defines a cookie parameter in the OpenAPI documentation.
  *
- * @param options - An object containing details about the cookie parameter.
- *                  - `name`: The name of the cookie parameter.
- *                  - `description`: (Optional) A brief description of the parameter.
- *                  - `required`: (Optional) A boolean indicating if the parameter is required.
- *                  - `schema`: (Optional) The schema defining the type and format of the parameter.
+ * @param options - Cookie parameter configuration
+ * @param options.name - The cookie name
+ * @param options.description - Cookie description
+ * @param options.required - Whether the cookie is required
+ * @param options.schema - Schema defining the cookie value type
+ * @returns MethodDecorator & ClassDecorator
  *
- * @returns A decorator function that adds the cookie parameter metadata to the target method or class.
+ * @example
+ * ```typescript
+ * @ApiCookieParam({
+ *   name: 'sessionId',
+ *   description: 'Session identifier',
+ *   required: true,
+ *   schema: { type: 'string' }
+ * })
+ * async getUser() {}
+ * ```
  */
 export function ApiCookieParam(options: {
   name: string;

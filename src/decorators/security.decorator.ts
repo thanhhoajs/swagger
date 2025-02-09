@@ -1,12 +1,17 @@
 import { SWAGGER_METADATA } from "@thanhhoajs/swagger";
 
 /**
- * Decorator to add basic auth security metadata to a controller or controller method.
+ * Adds Basic Authentication security scheme to OpenAPI documentation.
  *
- * @param options - An object with a single property, `description`, which is an optional
- *                  description of the security scheme.
+ * @param options - Configuration options for Basic Auth
+ * @param options.description - Optional description of how the Basic Auth is used
+ * @returns A decorator that can be applied to controllers or methods
  *
- * @returns A decorator function that adds the security metadata to the target.
+ * @example
+ * ```typescript
+ * @ApiBasicAuth({ description: 'Enter username and password' })
+ * export class AuthController {}
+ * ```
  */
 export function ApiBasicAuth(options: { description?: string } = {}) {
   return (target: any) => {
@@ -27,12 +32,17 @@ export function ApiBasicAuth(options: { description?: string } = {}) {
 }
 
 /**
- * Decorator to add bearer auth security metadata to a controller or controller method.
+ * Adds Bearer Authentication (JWT) security scheme to OpenAPI documentation.
  *
- * @param options - An object with a single property, `description`, which is an optional
- *                  description of the security scheme.
+ * @param options - Configuration options for Bearer Auth
+ * @param options.description - Optional description of how the Bearer Auth is used
+ * @returns A decorator that can be applied to controllers or methods
  *
- * @returns A decorator function that adds the security metadata to the target.
+ * @example
+ * ```typescript
+ * @ApiBearerAuth({ description: 'Enter JWT token' })
+ * export class SecureController {}
+ * ```
  */
 export function ApiBearerAuth(options: { description?: string } = {}) {
   return (target: any) => {
@@ -54,17 +64,25 @@ export function ApiBearerAuth(options: { description?: string } = {}) {
 }
 
 /**
- * Decorator to add OAuth2 security metadata to a controller or controller method.
+ * Adds OAuth2 security scheme to OpenAPI documentation.
  *
- * @param flows - An object containing the OAuth2 flows to support. The object should have
- *                one or more of the following properties:
- *                - `implicit`: An object with properties `authorizationUrl` and `scopes`.
- *                - `password`: An object with properties `tokenUrl` and `scopes`.
- *                - `clientCredentials`: An object with properties `tokenUrl` and `scopes`.
- *                - `authorizationCode`: An object with properties `authorizationUrl`,
- *                                       `tokenUrl`, and `scopes`.
+ * @param flows - OAuth2 flow configurations
+ * @param flows.implicit - Implicit flow configuration with authorizationUrl and scopes
+ * @param flows.password - Password flow configuration with tokenUrl and scopes
+ * @param flows.clientCredentials - Client credentials flow with tokenUrl and scopes
+ * @param flows.authorizationCode - Authorization code flow with all URLs and scopes
+ * @returns A decorator that can be applied to controllers or methods
  *
- * @returns A decorator function that adds the security metadata to the target.
+ * @example
+ * ```typescript
+ * @ApiOAuth2({
+ *   implicit: {
+ *     authorizationUrl: 'https://auth.example.com/oauth/authorize',
+ *     scopes: { 'read:users': 'Read users', 'write:users': 'Write users' }
+ *   }
+ * })
+ * export class OAuthController {}
+ * ```
  */
 export function ApiOAuth2(flows: {
   implicit?: any;
