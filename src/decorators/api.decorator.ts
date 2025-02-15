@@ -3,6 +3,8 @@ import {
   ParameterObject,
   RequestBodyObject,
   ResponseObject,
+  SchemaObject,
+  ReferenceObject,
   SWAGGER_METADATA,
 } from "@thanhhoajs/swagger";
 
@@ -34,31 +36,37 @@ export function ApiOperation(metadata: Partial<OperationObject>) {
  * @param tags - Array of tag names to apply
  */
 export function ApiTags(...tags: string[]) {
-  return (
+  return function (
     target: any,
-    propertyKey: string | symbol | undefined,
+    propertyKey?: string | symbol,
     descriptor?: PropertyDescriptor,
-  ) => {
-    if (descriptor) {
+  ) {
+    const metadata = {
+      tags: [...tags],
+    };
+
+    if (propertyKey && descriptor) {
+      // Method decorator
       const existingMetadata =
-        Reflect.getMetadata(SWAGGER_METADATA, target, propertyKey!) || {};
+        Reflect.getMetadata(SWAGGER_METADATA, target, propertyKey) || {};
       Reflect.defineMetadata(
         SWAGGER_METADATA,
         {
           ...existingMetadata,
-          tags,
+          ...metadata,
         },
         target,
-        propertyKey!,
+        propertyKey,
       );
     } else {
+      // Class decorator
       const existingMetadata =
         Reflect.getMetadata(SWAGGER_METADATA, target) || {};
       Reflect.defineMetadata(
         SWAGGER_METADATA,
         {
           ...existingMetadata,
-          tags,
+          ...metadata,
         },
         target,
       );
@@ -130,15 +138,63 @@ export function ApiQuery(param: Partial<ParameterObject>) {
  * @returns A decorator function that sets the request body metadata on the method.
  */
 
-export function ApiBody(metadata: Partial<RequestBodyObject>) {
+function getSchemaFromType(type: any): SchemaObject | ReferenceObject {
+  const typeMap = {
+    [String.name]: { type: "string" },
+    [Number.name]: { type: "number" },
+    [Boolean.name]: { type: "boolean" },
+    [Date.name]: { type: "string", format: "date-time" },
+    [Object.name]: { type: "object" },
+  };
+
+  if (!type) return {};
+
+  // Handle arrays
+  if (Array.isArray(type) || type === Array) {
+    const itemType = type.length > 0 ? type[0] : Object;
+    return {
+      type: "array",
+      items: getSchemaFromType(itemType),
+    };
+  }
+
+  // Handle primitive types
+  if (typeMap[type.name]) {
+    return typeMap[type.name];
+  }
+
+  // Handle class types (DTOs, entities etc)
+  if (typeof type === "function" && type.prototype) {
+    return { $ref: `#/components/schemas/${type.name}` };
+  }
+
+  return { type: "object" };
+}
+
+export function ApiBody(options: { type?: any } & Partial<RequestBodyObject>) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const existingMetadata =
       Reflect.getMetadata(SWAGGER_METADATA, target, propertyKey) || {};
+
+    // Get parameter type from TypeScript metadata if not provided
+    const parameterType =
+      options.type ||
+      Reflect.getMetadata("design:paramtypes", target, propertyKey)?.[0];
+
+    const schema = getSchemaFromType(parameterType);
+    const requestBody: Partial<RequestBodyObject> = {
+      required: true,
+      content: {
+        "application/json": { schema },
+      },
+      ...options,
+    };
+
     Reflect.defineMetadata(
       SWAGGER_METADATA,
       {
         ...existingMetadata,
-        requestBody: metadata,
+        requestBody,
       },
       target,
       propertyKey,
@@ -157,13 +213,28 @@ export function ApiBody(metadata: Partial<RequestBodyObject>) {
  */
 export function ApiResponse(
   statusCode: number,
-  metadata: Partial<ResponseObject>,
+  options: { type?: any } & Partial<ResponseObject>,
 ) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const existingMetadata =
       Reflect.getMetadata(SWAGGER_METADATA, target, propertyKey) || {};
+
+    // Get return type from TypeScript metadata if not provided
+    const returnType =
+      options.type ||
+      Reflect.getMetadata("design:returntype", target, propertyKey);
+
+    const schema = getSchemaFromType(returnType);
+    const response: Partial<ResponseObject> = {
+      description: "Successful response",
+      content: {
+        "application/json": { schema },
+      },
+      ...options,
+    };
+
     const responses = existingMetadata.responses || {};
-    responses[statusCode] = metadata;
+    responses[statusCode] = response;
 
     Reflect.defineMetadata(
       SWAGGER_METADATA,

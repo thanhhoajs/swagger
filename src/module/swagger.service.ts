@@ -44,6 +44,16 @@ export class SwaggerService {
     const explored = this.explorer.explore(modules);
     this.generatedPaths = explored.paths || {};
     this.generatedComponents = explored.components?.schemas || {};
+
+    // Update swagger document with generated content
+    this.swaggerDoc = {
+      ...this.swaggerDoc,
+      paths: this.generatedPaths,
+      components: {
+        ...this.swaggerDoc.components,
+        schemas: this.generatedComponents,
+      },
+    };
   }
 
   getPaths() {

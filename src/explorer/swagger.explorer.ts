@@ -29,18 +29,8 @@ export class SwaggerExplorer {
     this.paths = {};
     this.schemas = {};
 
-    // First collect all schemas from global registry
     this.collectGlobalSchemas();
-
-    // Then explore modules
-    for (const module of modules) {
-      const metadata = Reflect.getMetadata("module", module) || {};
-      if (metadata.controllers) {
-        for (const controller of metadata.controllers) {
-          this.exploreController(controller);
-        }
-      }
-    }
+    this.exploreModules(modules);
 
     return {
       paths: this.paths,
@@ -48,6 +38,34 @@ export class SwaggerExplorer {
         schemas: this.schemas,
       },
     };
+  }
+
+  private exploreModules(modules: any[], explored = new Set<any>()) {
+    for (const moduleOrController of modules) {
+      if (explored.has(moduleOrController)) continue;
+      explored.add(moduleOrController);
+
+      if (this.isController(moduleOrController)) {
+        this.exploreController(moduleOrController);
+      } else {
+        const metadata =
+          Reflect.getMetadata("module", moduleOrController) || {};
+
+        if (metadata.controllers) {
+          metadata.controllers.forEach((controller: any) => {
+            this.exploreController(controller);
+          });
+        }
+
+        if (metadata.imports) {
+          this.exploreModules(metadata.imports, explored);
+        }
+      }
+    }
+  }
+
+  private isController(target: any): boolean {
+    return Reflect.hasMetadata(CONTROLLER_METADATA_KEY, target);
   }
 
   private collectGlobalSchemas() {
